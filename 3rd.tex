@@ -1,0 +1,508 @@
+% @Author: Macsnow
+% @Date:   2017-05-04 23:46:13
+% @Last Modified by:   Macsnow
+% @Last Modified time: 2017-05-05 02:15:08
+
+\begin{enumerate}
+    \item[1.] 令文法 $G_1$ 为：
+    
+    \begin{align*}
+        E & \to E + T | T \\
+        T & \to T * F | F \\
+        F & \to (E) | i \\
+    \end{align*}
+    
+    证明 $ E + T * F $ 是它的一个句型，指出这个句型的所有短语，直接短语和句柄。
+
+    \textbf{答：}
+    
+    证明： 
+    \begin{align*}
+        E & \to E + T \\
+        E & \to E + T * F
+    \end{align*}
+    因此$ E + T * F $是文法$G_1$的一个句型。
+    
+    短语：$E + T * F$, $T * F$
+    
+    直接短语：$T * F$
+    
+    句柄：$T * F$
+    
+            
+    
+    \item[3.] 令文法\footnotemark $G_2$ 为：
+    
+    \footnotetext{此处文法 $G_2$ 来自于练习题 2，但练习题 2 不要求完成，因此改动了题目消除了对练习题 2 的依赖。}
+    
+    \begin{align*}
+        S & \to a | \wedge | (T) \\
+        T & \to T, S | S 
+    \end{align*}
+    
+    \begin{enumerate}
+        \item 计算文法 $G_2$ 的 FIRSTVT 和 LASTVT。
+        \item 计算 $G_2$ 的优先关系。$G_2$ 是一个算符优先文法吗？
+        \item 计算 $G_2$ 的优先函数。
+        \item \sout{给出输入串 (a, (a, a)) 的算符优先分析过程。}
+    \end{enumerate}
+    
+    \textbf{答：}
+    \begin{enumerate}
+        
+        \item
+        $$
+            S \to a \Rightarrow \left\{
+                \begin{array}{rl}
+                    a & \in FIRSTVT(S) \\
+                    a & \in LASTVT(S) 
+                \end{array}
+            \right.
+        $$
+        
+        $$
+            S \to \wedge \Rightarrow \left\{
+                \begin{array}{rl}
+                    \wedge & \in FIRSTVT(S)  \\
+                    \wedge & \in LASTVT(S)
+                \end{array}
+            \right.
+        $$
+        
+        $$
+            S \to (T) \Rightarrow \left\{
+                \begin{array}{rl}
+                    ( & \in FIRSTVT(S) \\
+                    ) & \in LASTVT(S)
+                \end{array}
+            \right.
+        $$
+        
+        $$
+            T \to T, S \Rightarrow \left\{
+                \begin{array}{rl}
+                    FIRSTVT(T) & \subseteq FIRSTVT(T) \\
+                    LASTVT(S) & \subseteq LASTVT(T) \\
+                    , & \in FIRSTVT(T) \\
+                    , & \in LASTVT(T)
+                \end{array}
+            \right.
+        $$
+        
+        $$
+            T \to S \Rightarrow \left\{
+                \begin{array}{rl}
+                    FIRSTVT(S) & \subseteq FIRSTVT(T) \\
+                    LASTVT(S) & \subseteq LASTVT(T) 
+                \end{array}
+            \right.
+        $$
+        
+        得到FIRSTVT和LASTVT：
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|}
+                \hline
+                $V_N$ & FIRSTVT & LASTVT \\
+                \hline
+                S & \{a, $\wedge, ($\} & \{a, $\wedge$, )\} \\
+                \hline
+                T & \{a, $\wedge, (, \textbf{,}$\} & \{a, $\wedge$, ), \textbf{,}\} \\
+                \hline
+            \end{tabular}
+            \caption{文法 $G_1$ 的 FIRSTVT 和 LASTVT}
+            \label{tab:G1FL}
+        \end{table}
+        
+        \item
+        
+        观察发现 $G_2$ 的任意产生式的右部不含两个相继的非终结符，因此易知 $G_2$ 是算符文法。
+        
+        且$G_2$不含$\epsilon$产生式
+        
+        分析优先级关系：
+            $$
+                S \to (T) \Rightarrow \left\{
+                    \begin{array}{rll}
+                        ( & \lessdot t & , \forall t \in FIRSTVT(T) \\
+                        t & \gtrdot ) & , \forall t \in LASTVT(T) \\
+                        ( & \eqcirc )
+                    \end{array}
+                \right.
+            $$
+            
+            $$
+                T \to T, S \Rightarrow \left\{
+                    \begin{array}{rll}
+                        t & \gtrdot , & , \forall t \in LASTVT(T) \\
+                        , & \lessdot t & , \forall t \in FIRSTVT(S)
+                    \end{array}
+                \right.
+            $$
+            
+            对于 $\#S\#$ 有：
+            
+            $$
+                \left\{
+                    \begin{array}{rll}
+                        \# & \lessdot t & , \forall t \in FIRSTVT(T) \\
+                        t & \gtrdot \# & , \forall t \in LASTVT(T) \\
+                        \# & \eqcirc \# 
+                    \end{array}
+                \right.
+            $$
+            
+            构造优先关系表：
+            
+            \begin{table}[H]
+                \centering
+                \begin{equation*}
+                    \begin{array}{|c|c|c|c|c|c|c|}
+                        \hline
+                          & a & \wedge & ( & ) & , & \# \\
+                        \hline
+                        a & & & & \gtrdot & \gtrdot & \gtrdot \\
+                        \hline
+                        \wedge & & & & \gtrdot & \gtrdot & \gtrdot \\
+                        \hline
+                        ( & \lessdot & \lessdot & \lessdot & \eqcirc & \lessdot & \\
+                        \hline
+                        ) & & & & \gtrdot & \gtrdot & \gtrdot \\
+                        \hline
+                        , & \lessdot & \lessdot & \lessdot & \gtrdot & \gtrdot & \\
+                        \hline
+                        \# & \lessdot & \lessdot & \lessdot & & & \eqcirc \\
+                        \hline
+                    \end{array}
+                \end{equation*}
+                \caption{文法 $G_2$ 的优先关系表}
+                \label{tab:G2F}
+            \end{table}
+        
+            无优先级冲突。
+            
+            因此$G_2$是算符优先文法。
+    
+    \end{enumerate}
+    
+    \item[5.] 考虑文法
+    
+    \begin{align*}
+        S & \to AS | b \\
+        A & \to SA | a
+    \end{align*}
+    
+    \begin{enumerate}
+        \item 列出这个文法的所有 LR(0) 项目。
+        \item 构造这个文法的 LR(0) 项目集规范族及识别活前缀的 DFA。
+        \item 这个文法是 SLR 的吗？若是，构造出它的 SLR 分析表。
+        \item \sout{这个文法是 LALR 或 LR(1) 的吗？}
+    \end{enumerate}
+    
+    \textbf{答：}
+    
+    \begin{enumerate}
+        \item
+        \begin{enumerate}[(1)]
+            \item $S \to \cdot AS$
+            \item $S \to A \cdot S$
+            \item $S \to AS \cdot$
+            \item $S \to \cdot b$
+            \item $S \to b \cdot$
+            \item $A \to \cdot SA$
+            \item $A \to S \cdot A$
+            \item $A \to SA \cdot$
+            \item $A \to \cdot a$
+            \item $A \to a \cdot$
+        \end{enumerate}
+        
+        \item
+        
+        拓广文法：
+
+        \begin{enumerate}[(1)]
+            \item $S' \to S$
+            \item $S \to AS$
+            \item $S \to b$
+            \item $A \to SA$
+            \item $A \to a$
+        \end{enumerate}
+        
+        构造 LR(0) 项目集规范族：
+        
+        \begin{equation*}
+            \begin{array}{cl}
+                I_0 = & \{S' \to \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a \} \\
+                \hline
+                I_1 = & GO(I_0, S) = \{S' \to S \cdot, A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b\} \\
+                I_2 = & GO(I_0, A) = \{S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a \} \\
+                I_3 = & GO(I_0, b) = \{S \to b \cdot \} \\
+                I_4 = & GO(I_0, a) = \{A \to a \cdot \} \\
+                \hline
+                I_5 = & GO(I_1, A) = \{A \to SA \cdot, S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a \} \\
+                I_6 = & GO(I_1, S) = \{A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b\} \\
+                    & GO(I_1, a) = \{A \to a \cdot \} = I_4 \\
+                    & GO(I_1, b) = \{S \to b \cdot\} = I_3 \\
+                \hline
+                I_7 = & GO(I_2, S) = \{S \to AS \cdot, A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b \} \\
+                    & GO(I_2, A) = \{S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a \} = I_2 \\
+                    & GO(I_2, b) = \{S \to b \cdot \} = I_3 \\
+                    & GO(I_2, a) = \{S \to a \cdot \} = I_4 \\
+                \hline
+                    & GO(I_5, S) = \{S \to AS \cdot, A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b\} = I_7 \\
+                    & GO(I_5, A) = \{S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a\} = I_2 \\
+                    & GO(I_5, b) = \{S \to b \cdot\} = I_3 \\
+                    & GO(I_5, a) = \{A \to a \cdot\} = I_4 \\
+                \hline
+                    & GO(I_6, A) = \{A \to SA \cdot, S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a \} = I_5 \\
+                    & GO(I_6, S) = \{A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b \} = I_6 \\
+                    & GO(I_6, a) = \{A \to a \cdot\} = I_4 \\
+                    & GO(I_6, b) = \{S \to b \cdot\} = I_3 \\
+                \hline
+                    & GO(I_7, A) = \{A \to SA \cdot, S \to A \cdot S, S \to \cdot AS, S \to \cdot b, A \to \cdot SA, A \to \cdot a\} = I_5 \\
+                    & GO(I_7, S) = \{A \to S \cdot A, A \to \cdot SA, A \to \cdot a, S \to \cdot AS, S \to \cdot b\} = I_6 \\
+                    & GO(I_7, a) = \{A \to a \cdot\} = I_4 \\
+                    & GO(I_7, b) = \{S \to b \cdot\} = I_3 \\
+            \end{array}
+        \end{equation*}
+        
+        LR(0) 项目集规范族为 $\{I_i | i = 0, 1, \dots 7\}$
+        
+        \item
+        
+        构造 LR(0) 分析表：
+        
+        \begin{equation*}
+            \begin{array}{c|ccc|cc}
+                I & a & b & \# & S & A \\
+                \hline
+                0 & s_4 & s_3 & & 1 & 2 \\
+                1 & s_4 & s_3 & acc & 6 & 5 \\
+                2 & s_4 & s_3 & & 7 & 2 \\
+                3 & r_3 & r_3 & r_3 & & \\
+                4 & r_5 & r_5 & r_5 & & \\
+                5 & r_4, s_4 & r_4, s_3 & r_4 & 7 & 2 \\
+                6 & s_4 & s_3 & & 6 & 5 \\
+                7 & r_2, s_4 & r_2, s_3 & r_2 & 6 & 5\\
+            \end{array}
+        \end{equation*}
+        
+        有冲突，因为 $FOLLOW(S) \cap FOLLOW(A) = \{a, b\}$，SLR 法不能解决冲突，因此此文法不是 SLR 的
+    
+    \end{enumerate}
+    
+    \item[7.] 证明下面文法是 SLR(1) 但不是 LR(0) 的。
+    
+    \begin{align*}
+        S & \to A \\
+        A & \to Ab | bBa \\
+        B & \to aAc | a | aAb
+    \end{align*}
+    
+    \textbf{证：}
+    
+    文法的开始符号只有一个产生式因此不需要拓广文法。
+    
+    \begin{enumerate}[(1)]
+        \item $S \to A$
+        \item $A \to Ab$
+        \item $A \to bBa$
+        \item $B \to aAc$
+        \item $B \to a$
+        \item $B \to aAb$
+    \end{enumerate}
+    
+    构造LR(0) 项目集规范族：
+    
+    \begin{equation*}
+        \begin{array}{cl}
+            I_0 = & \{S \to \cdot A, A \to \cdot Ab, A \to \cdot bBa\} \\
+            \hline
+            I_1 = & GO(I_0, A) = \{S \to A \cdot, A \to A \cdot b \} \\
+            I_2 = & GO(I_0, b) = \{A \to b \cdot Ba, B \to \cdot aAc, B \to \cdot a, B \to \cdot aAb \}\\
+            \hline
+            I_3 = & GO(I_1, b) = \{A \to Ab \cdot\} \\
+            \hline
+            I_4 = & GO(I_2, B) = \{A \to bB \cdot a\} \\
+            I_5 = & GO(I_2, a) = \{B \to a \cdot Ac, B \to a \cdot, B \to a \cdot Ab, A \to \cdot Ab, A \to \cdot bBa\} \\
+            \hline
+            I_6 = & GO(I_4, a) = \{A \to bBa \cdot \} \\
+            \hline
+            I_7 = & GO(I_5, A) = \{B \to aA \cdot c, B \to aA \cdot b, A \to A \cdot b \} \\
+                  & GO(I_5, b) = \{A \to b \cdot Ba, B \to \cdot aAc, B \to \cdot a, B \to \cdot aAb \} = I_2 \\
+            \hline
+            I_8 = & GO(I_7, c) = \{B \to aAc \cdot\} \\
+            I_9 = & GO(I_7, b) = \{B \to aAb \cdot, A \to Ab \cdot\}
+        \end{array}
+    \end{equation*}
+    
+    构造 LR(0) 分析表：
+    
+    \begin{table}[H]
+        \centering
+        \begin{equation*}
+            \begin{array}{c|cccc|ccc}
+                I & a & b & c & \# & S & A & B \\
+                \hline
+                0 & & s_2 & & & & 1 & \\
+                1 & & s_3 & & acc & & & \\
+                2 & s_5 & & & & & & 4 \\
+                3 & r_2 & r_2 & r_2 & r_2 & & & \\
+                4 & s_6 & & & & & & \\
+                5 & r_5 & r_5, s_8 & r_5 & r_5 & & 7 & \\
+                6 & r_3 & r_3 & r_3 & r_3 & & & \\
+                7 & & s_{10} & s_9 & & & & \\
+                8 & r_4 & r_4 & r_4 & r_4 & & & \\
+                9 & r_6, r_2 & r_6, r_2 & r_6, r_2 & r_6, r_2 & & & \\
+            \end{array}
+        \end{equation*}
+        \label{tab:SLR_7_1}
+    \end{table}
+    
+    表中有许多冲突，这表明\textbf{该文法不是 LR(0) 的}。
+    
+    计算 FIRST 和 FOLLOW 集：
+    
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|cc}
+            $V_N$ & FIRST & FOLLOW \\
+            \hline
+            S & \{b\} & \{\#\} \\
+            A & \{b\} & \{\#, b, c\} \\
+            B & \{a\} & \{a\} \\
+        \end{tabular}
+        \caption{文法的 FIRST 和 FOLLOW 集}
+        \label{tab:FF_7}
+    \end{table}
+    
+    对于表中 $I_5, I_{10}$ 中的冲突，应用 SLR(1) 法解决冲突：
+    
+    \begin{equation*}
+        \begin{array}{c|cccc|ccc}
+            I & a & b & c & \# & S & A & B \\
+            \hline
+            0 & & s_2 & & & & 1 & \\
+            1 & & s_3 & & acc & & & \\
+            2 & s_5 & & & & & & 4 \\
+            3 & r_2 & r_2 & r_2 & r_2 & & & \\
+            4 & s_6 & & & & & & \\
+            5 & r_5 & s_8 & r_5 & r_5 & & 7 & \\
+            6 & r_3 & r_3 & r_3 & r_3 & & & \\
+            7 & & s_{10} & s_9 & & & & \\
+            8 & r_4 & r_4 & r_4 & r_4 & & & \\
+            9 & r_6 & r_2 & r_2 & r_2 & & & \\
+        \end{array}
+    \end{equation*}
+    
+    由上表，解决了所有冲突，因此该文法是 SLR(1) 的。
+    
+    该文法是 SLR(1) 的但不是 LR(0) 的得证。
+    
+    \item[8.] 证明下面的文法
+    
+    \begin{align*}
+        S & \to AaAb | BbBa \\
+        A & \to \epsilon \\
+        B & \to \epsilon
+    \end{align*}
+    
+    是 LL(1) 的但不是 SLR(1) 的。
+    
+    \textbf{证：}
+    
+    计算该文法的 FIRST 和 FOLLOW：
+    
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|cc}
+            $V_N$ & FIRST & FOLLOW \\
+            \hline
+            S & \{a, b\} & \{\#\} \\
+            A & \{$\epsilon$\} & \{a, b\} \\
+            B & \{$\epsilon$\} & \{a, b\} \\
+        \end{tabular}
+        \caption{文法的 FIRST 和 FOLLOW 集}
+        \label{tab:FF_8}
+    \end{table}
+    
+    对于 $S \to AaAb | BbBa $
+    
+    $ FIRST(AaAb) \cap FIRST(BbBa) = \{a\} \cap \{b\} = \emptyset $
+    
+    因此，该文法是 LL(1) 的。
+    
+    拓广文法：
+    
+    \begin{enumerate}[(1)]
+        \item $S' \to S$
+        \item $S \to AaAb$
+        \item $S \to BbBa$
+        \item $A \to \epsilon$
+        \item $B \to \epsilon$
+    \end{enumerate}
+    
+    构造 LR(0) 项目集规范族：
+    
+    \begin{equation*}
+        \begin{array}{cl}
+            I_0 = & \{S' \to \cdot S, S \to \cdot AaAb, S \to \cdot BbBa, A \to \cdot, B \to \cdot \} \\
+            \hline
+            I_1 = & GO(I_0, S) = \{S' \to S \cdot \} \\
+            I_2 = & GO(I_0, A) = \{S \to A \cdot aAb \} \\
+            I_3 = & GO(I_0, B) = \{S \to B \cdot bBa \} \\
+            \hline
+            I_4 = & GO(I_2, a) = \{S \to Aa \cdot Ab, A \to \cdot\} \\
+            \hline
+            I_5 = & GO(I_3, b) = \{S \to Bb \cdot Ba, B \to \cdot\} \\
+            \hline
+            I_6 = & GO(I_4, A) = \{S \to AaA \cdot b\} \\
+            \hline
+            I_7 = & GO(I_5, B) = \{S \to BbB \cdot a\} \\
+            \hline
+            I_8 = & GO(I_6, b) = \{S \to AaAb \cdot\} \\
+            \hline
+            I_9 = & GO(I_7, a) = \{S \to BbBa \cdot\} \\
+        \end{array}
+    \end{equation*}
+    
+    构造 LR(0) 分析表：
+    
+    \begin{equation*}
+        \begin{array}{c|ccc|ccc}
+            I & a & b & \# & S & A & B \\
+            \hline
+            0 & r_4, r_5 & r_4, r_5 & r_4, r_5 & 1 & 2 & 3 \\
+            1 & & & acc & & & \\
+            2 & s_4 & & & & & \\
+            3 & s_5 & & & & & \\
+            4 & r_4 & r_4 & r_4 & & 6 & \\
+            5 & r_5 & r_5 & r_5 & & & 7 \\
+            6 & & s_8 & & & & \\
+            7 & s_9 & & & & & \\
+            8 & r_2 & r_2 & r_2 & & & \\
+            9 & r_3 & r_3 & r_3 & & & \\
+        \end{array}
+    \end{equation*}
+    
+    在状态 0 处有冲突，因此该文法不是 LR(0) 文法。
+    
+    检查表 \ref{tab:FF_8} 得 FOLLOW(A) = FOLLOW(B)，从而 SLR 法无法解决冲突，因此该文法不是 SLR(1) 文法。
+    
+    该文法是 LL(1) 的但不是 SLR(1) 的得证。
+    
+    \item[9.] 证明下面文法：
+    
+    \begin{align*}
+        S & \to Aa | bAc | Bc | bBa \\
+        A & \to d
+    \end{align*}
+    
+    \sout{是 LALR(1) 但}不是 SLR(1) 的。
+    
+    \textbf{答：}
+    
+    条件不足，无法作答。
+    
+\end{enumerate}
